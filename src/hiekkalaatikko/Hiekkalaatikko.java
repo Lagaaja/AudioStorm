@@ -3,6 +3,7 @@ package hiekkalaatikko;
 
 import java.io.File;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -10,11 +11,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.SourceDataLine;
 
 
 
@@ -25,6 +29,7 @@ public class Hiekkalaatikko extends Application {
     public static void main(String[] args) {
         song = new Sound("Beyond the Wall of Sleep.wav");
         launch(args);
+        song.close();
         
         
         
@@ -42,13 +47,33 @@ public class Hiekkalaatikko extends Application {
         slider.setMin(0);
         int mins = (int)(song.getSecondsLength()/60);
         int seconds = (int)(song.getSecondsLength()-(mins*60));
+        
+        StringConverter<Double> stringConverter = new StringConverter<Double>() {
+            @Override
+            public String toString(Double object) {
+                long seconds = object.longValue();
+                long minutes = TimeUnit.SECONDS.toMinutes(seconds);
+                long remainingseconds = seconds - TimeUnit.MINUTES.toSeconds(minutes);
+                return String.format("%02d", minutes) + ":" + String.format("%02d", remainingseconds);
+            }
+
+            @Override
+            public Double fromString(String string) {
+                return null;
+            }
+        };
+        slider.setLabelFormatter(stringConverter);
         slider.setMax(song.getSecondsLength());
         slider.setValue(0);
         slider.setShowTickLabels(true);
-        slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(50);
-        slider.setMinorTickCount(5);
-        slider.setBlockIncrement(10);
+        //slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(song.getSecondsLength());
+        //slider.setMinorTickCount(5);
+        slider.setBlockIncrement(1);
+        
+        Text timeMark = new Text("00:00");
+        slider.valueProperty().addListener((observable, oldValue, newValue) ->
+            timeMark.setText(stringConverter.toString(newValue.doubleValue())));
 
         //setting color to the scene 
         scene.setFill(Color.BLUE);
@@ -65,11 +90,16 @@ public class Hiekkalaatikko extends Application {
         grid.setHgap(70);
         
         GridPane.setConstraints(slider, 1, 1);
-        grid.getChildren().add(slider);
+        grid.getChildren().addAll(slider, timeMark);
         scene.setRoot(grid);
 
         //Displaying the contents of the stage 
         primaryStage.show();
+        
+        SourceDataLine sl = AudioSystem.getSourceDataLine(song.getaFormat());
+        sl.open(song.getaFormat());
+        sl.start();
     }
+    
     
 }

@@ -61,38 +61,14 @@ public class Sound {
 
     }
     
-    
-    
-    /*Scanner lukija = new Scanner(System.in);
+    public int bytesLeft() {
         try {
-            File file = new File("Beyond the Wall of Sleep.wav");
-            AudioInputStream in = AudioSystem.getAudioInputStream(file);
-            AudioFormat aFormat = in.getFormat();
-            Clip clip = AudioSystem.getClip();
-            clip.open(in);
-            clip.start();
-
-            long frameLength = in.getFrameLength();
-            double length = (frameLength*1.0)/aFormat.getFrameRate();
-            
-            while(true) {
-                System.out.println("Skip to seconds: ");
-                String input = lukija.nextLine();
-                if(input.equals("quit")) {
-                    break;
-                }
-                int skip = Integer.parseInt(input);
-                int frames = (int)(skip*aFormat.getFrameRate());
-                System.out.println("-- Frames: " + frames);
-                
-                clip.setFramePosition(frames);
-            }
-            
-            in.close();
-
-        } catch (Exception e) {
+        return this.clip.available();
+        } catch(Exception e) {
             System.err.println(e.getMessage());
-        }*/
+            return -1;
+        }
+    }
 
     public AudioInputStream getIn() {
         return in;

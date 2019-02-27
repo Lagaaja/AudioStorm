@@ -26,6 +26,8 @@ public class Sound {
     private long frameLength;
     private double frameRate;
     private double secondsLength;
+    private long clipPos;
+    
     
     public Sound(String path) {
         try {
@@ -35,21 +37,17 @@ public class Sound {
             this.frameLength = in.getFrameLength();
             this.frameRate = this.aFormat.getFrameRate();
             this.secondsLength = this.frameLength/this.aFormat.getFrameRate();
-        } catch(UnsupportedAudioFileException | IOException e) {
+            this.clip = AudioSystem.getClip();
+            this.clipPos = this.clip.getMicrosecondPosition();
+            clip.open(this.in);
+        } catch(UnsupportedAudioFileException | IOException |LineUnavailableException e) {
             System.err.println(e.getMessage());
         }
         
     }
     
     public void play() {
-        try {
-            this.clip = AudioSystem.getClip();
-            clip.open(this.in);
-            clip.start();
-        } catch(LineUnavailableException | IOException e) {
-            System.err.println(e.getMessage());
-        }
-        
+        clip.start();
     }
     
     public void close() {
@@ -117,4 +115,16 @@ public class Sound {
     public double getSecondsLength() {
         return secondsLength;
     }
+
+    public long getClipPos() {
+        return clipPos;
+    }
+
+    public void updateClipPos() {
+        this.clipPos = clip.getMicrosecondPosition();
+    }
+    
+    
+    
+    
 }

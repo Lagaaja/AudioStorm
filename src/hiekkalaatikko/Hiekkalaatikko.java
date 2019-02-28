@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 
@@ -23,7 +24,7 @@ public class Hiekkalaatikko extends Application {
    private static Sound song;
     
     public static void main(String[] args) {
-        song = new Sound("Beyond the Wall of Sleep.wav");
+        song = new Sound("Beyond the Wall of Sleep.mp3");
         launch(args);
         song.close();
         
@@ -90,10 +91,10 @@ public class Hiekkalaatikko extends Application {
         
         AnimationTimer trackSong = new AnimationTimer() {
             @Override public void handle(long currentNanoTime) {
-                long newPos = song.getClip().getMicrosecondPosition();
-                if(newPos > song.getClipPos()) {
-                    song.updateClipPos();
-                    slider.setValue(newPos/1000000);
+                double newPos = song.getMp().currentTimeProperty().get().toSeconds();
+                if(newPos > song.getCurrentTime()) {
+                    song.updateCurrentTime();
+                    slider.setValue(newPos);
                 }
             }
         };
@@ -102,9 +103,9 @@ public class Hiekkalaatikko extends Application {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue) {
-                    if(!song.getClip().isRunning()){song.play();}
-                    song.getClip().setMicrosecondPosition((long)slider.getValue()*1000000);
-                    song.updateClipPos();
+                    //if(!song.getClip().isRunning()){song.play();}
+                    song.getMp().seek(new Duration(slider.getValue()));
+                    song.updateCurrentTime();
                     trackSong.start();
                 } else {
                     trackSong.stop();

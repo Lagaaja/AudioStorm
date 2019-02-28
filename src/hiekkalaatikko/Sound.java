@@ -7,6 +7,9 @@ package hiekkalaatikko;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -26,11 +29,15 @@ public class Sound {
     private long frameLength;
     private double frameRate;
     private double secondsLength;
-    private long clipPos;
+    //private long clipPos;
+    
+    private Media sound;
+    private MediaPlayer mp;
+    private double currentTime;
     
     
     public Sound(String path) {
-        try {
+        /*try {
             File file = new File(path);
             this.in = AudioSystem.getAudioInputStream(file);
             this.aFormat = in.getFormat();
@@ -39,15 +46,25 @@ public class Sound {
             this.secondsLength = this.frameLength/this.aFormat.getFrameRate();
             this.clip = AudioSystem.getClip();
             this.clipPos = this.clip.getMicrosecondPosition();
+            System.out.println("try clause");
             clip.open(this.in);
         } catch(UnsupportedAudioFileException | IOException |LineUnavailableException e) {
+            System.out.println("Sound constructor");
             System.err.println(e.getMessage());
-        }
+        }*/
+        String mediaURI = new File(path).toURI().toString();
+        System.out.println(mediaURI);
+        this.sound = new Media(mediaURI);
+        this.secondsLength = this.sound.getDuration().toSeconds();
+        this.mp = new MediaPlayer(this.sound);
+        this.currentTime = this.mp.currentTimeProperty().get().toSeconds();
+        
         
     }
     
     public void play() {
-        clip.start();
+        //clip.start();
+        mp.play();
     }
     
     public void close() {
@@ -92,13 +109,20 @@ public class Sound {
         return secondsLength;
     }
 
-    public long getClipPos() {
-        return clipPos;
+    public /*long*/double /*getClipPos()*/getCurrentTime() {
+        return /*clipPos*/currentTime;
     }
 
-    public void updateClipPos() {
-        this.clipPos = clip.getMicrosecondPosition();
+    public void /*updateClipPos()*/updateCurrentTime() {
+        //this.clipPos = clip.getMicrosecondPosition();
+        this.currentTime = this.mp.currentTimeProperty().get().toSeconds();
     }
+
+    public MediaPlayer getMp() {
+        return mp;
+    }
+    
+    
     
     
     

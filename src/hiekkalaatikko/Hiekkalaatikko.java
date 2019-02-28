@@ -22,6 +22,7 @@ import javafx.util.StringConverter;
 
 public class Hiekkalaatikko extends Application {
    private static Sound song;
+   private static Slider slider = new Slider();
     
     public static void main(String[] args) {
         song = new Sound("Beyond the Wall of Sleep.wav");
@@ -57,13 +58,8 @@ public class Hiekkalaatikko extends Application {
         
         Text viewSongPos = new Text("00:00");
         
-        Slider slider = new Slider();
         slider.setLabelFormatter(stringConv);
         slider.setMin(0);
-        slider.setMax(song.getSecondsLength());
-        slider.setValue(0);
-        slider.setShowTickLabels(true);
-        slider.setMajorTickUnit(song.getSecondsLength());
         slider.setBlockIncrement(10);
         
 
@@ -102,7 +98,8 @@ public class Hiekkalaatikko extends Application {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue) {
-                    song.getMp().seek(new Duration(slider.getValue()));
+                    System.out.println(new Duration(slider.getValue()*1000).toSeconds());
+                    song.getMp().seek(new Duration(slider.getValue()*1000));
                     song.updateCurrentTime();
                     trackSong.start();
                 } else {
@@ -119,7 +116,13 @@ public class Hiekkalaatikko extends Application {
             }
             
         });
-        song.play();
+    }
+    
+    public static void initSlider() {
+        slider.setMax(song.getSecondsLength());
+        slider.setValue(0);
+        slider.setShowTickLabels(true);
+        slider.setMajorTickUnit(song.getSecondsLength());
     }
     
     

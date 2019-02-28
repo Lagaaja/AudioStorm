@@ -6,7 +6,7 @@ import javafx.scene.media.MediaPlayer;
 
 public class Sound {
     
-    private final double secondsLength;
+    private double secondsLength;
     
     private final Media sound;
     private final MediaPlayer mp;
@@ -19,9 +19,16 @@ public class Sound {
         System.out.println(mediaURI);
         this.sound = new Media(mediaURI);
         this.mp = new MediaPlayer(this.sound);
-        //this.secondsLength = this.sound.getDuration().toSeconds();
-        this.secondsLength = this.mp.getStopTime().toSeconds();
-        System.out.println(this.secondsLength);
+        
+        this.mp.setOnReady(new Runnable() {
+            @Override
+            public void run() {
+                secondsLength = mp.getStopTime().toSeconds();
+                Hiekkalaatikko.initSlider();
+                mp.play();
+            }
+            
+        });
         this.currentTime = this.mp.currentTimeProperty().get().toSeconds();
         
         

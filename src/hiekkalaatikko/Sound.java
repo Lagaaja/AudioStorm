@@ -18,8 +18,10 @@ public class Sound {
         String mediaURI = new File(path).toURI().toString();
         System.out.println(mediaURI);
         this.sound = new Media(mediaURI);
-        this.secondsLength = this.sound.getDuration().toSeconds();
         this.mp = new MediaPlayer(this.sound);
+        //this.secondsLength = this.sound.getDuration().toSeconds();
+        this.secondsLength = this.mp.getStopTime().toSeconds();
+        System.out.println(this.secondsLength);
         this.currentTime = this.mp.currentTimeProperty().get().toSeconds();
         
         

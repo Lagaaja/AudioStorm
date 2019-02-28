@@ -98,7 +98,7 @@ public class Hiekkalaatikko extends Application {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue) {
-                    System.out.println(new Duration(slider.getValue()*1000).toSeconds());
+                    //System.out.println(new Duration(slider.getValue()*1000).toSeconds());
                     song.getMp().seek(new Duration(slider.getValue()*1000));
                     song.updateCurrentTime();
                     trackSong.start();
